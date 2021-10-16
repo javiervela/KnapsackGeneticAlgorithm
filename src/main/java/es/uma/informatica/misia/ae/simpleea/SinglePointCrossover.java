@@ -11,12 +11,15 @@ public class SinglePointCrossover implements Crossover {
 	}
 
 	@Override
-	public Individual apply(Individual parent1, Individual parent2) {
-		Individual child = new Individual (parent1);
-		int cutPoint = rnd.nextInt(parent1.getChromosome().length+1);
+	public BinaryString apply(Individual individual1, Individual individual2) {
+		BinaryString binaryParent1 = (BinaryString) individual1;
+		BinaryString binaryParent2 = (BinaryString) individual2;
 		
-		for (int i=cutPoint; i < parent1.getChromosome().length; i++) {
-			child.getChromosome()[i] = parent2.getChromosome()[i];
+		BinaryString child = new BinaryString (binaryParent1);
+		int cutPoint = rnd.nextInt(binaryParent1.getChromosome().length+1);
+		
+		for (int i=cutPoint; i < binaryParent1.getChromosome().length; i++) {
+			child.getChromosome()[i] = binaryParent2.getChromosome()[i];
 		}
 		return child;
 	}

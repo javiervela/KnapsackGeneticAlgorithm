@@ -14,8 +14,9 @@ public class BitFlipMutation implements Mutation {
 	}
 
 	@Override
-	public Individual apply(Individual original) {
-		Individual mutated = new Individual(original);
+	public Individual apply(Individual individual) {
+		BinaryString original = (BinaryString) individual;
+		BinaryString mutated = new BinaryString(original);
 		for (int i = 0; i < mutated.getChromosome().length; i++) {
 			if (rnd.nextDouble() < bitFlipProb) {
 				byte value = mutated.getChromosome()[i];

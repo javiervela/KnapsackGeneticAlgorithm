@@ -10,15 +10,16 @@ public class Onemax implements Problem{
 	}
 
 	public double evaluate(Individual individual) {
+		BinaryString binaryString = (BinaryString)individual;
 		double result = 0.0;
-		for (int i=0; i < individual.getChromosome().length; i++) {
-			result += individual.getChromosome()[i];
+		for (int i=0; i < binaryString.getChromosome().length; i++) {
+			result += binaryString.getChromosome()[i];
 		}
 		return result;
 	}
 	
-	public Individual generateRandomIndividual(Random rnd) {
-		return new Individual(n,rnd);
+	public BinaryString generateRandomIndividual(Random rnd) {
+		return new BinaryString(n,rnd);
 	}
 
 }

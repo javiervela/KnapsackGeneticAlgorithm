@@ -32,7 +32,7 @@ public class EvolutionaryAlgorithm {
 	private void configureAlgorithm(Map<String, Double> parameters, Problem problem) {
 		populationSize = parameters.get(POPULATION_SIZE_PARAM).intValue();
 		maxFunctionEvaluations = parameters.get(MAX_FUNCTION_EVALUATIONS_PARAM).intValue();
-		double bitFLipProb = parameters.get(BitFlipMutation.BIT_FLIP_PROBABILITY_PARAM);
+		double bitFlipProb = parameters.get(BitFlipMutation.BIT_FLIP_PROBABILITY_PARAM);
 		long randomSeed = parameters.get(RANDOM_SEED_PARAM).longValue();
 		
 		this.problem = problem; 
@@ -41,7 +41,7 @@ public class EvolutionaryAlgorithm {
 		
 		selection = new BinaryTournament(rnd);
 		replacement = new ElitistReplacement();
-		mutation = new BitFlipMutation(rnd, bitFLipProb);
+		mutation = new BitFlipMutation(rnd, bitFlipProb);
 		recombination = new SinglePointCrossover(rnd);
 	}
 	
