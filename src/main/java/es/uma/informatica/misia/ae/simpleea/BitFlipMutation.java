@@ -6,6 +6,7 @@ public class BitFlipMutation implements Mutation {
 
 	private double bitFlipProb;
 	private Random rnd;
+	public static final String BIT_FLIP_PROBABILITY_PARAM = "bitFlipProbability";
 	
 	public BitFlipMutation (Random rnd, double bitFlipProb) {
 		this.rnd = rnd;

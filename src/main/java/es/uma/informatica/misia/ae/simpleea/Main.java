@@ -27,7 +27,7 @@ public class Main {
 		Map<String, Double> parameters = new HashMap<>();
 		parameters.put(EvolutionaryAlgorithm.POPULATION_SIZE_PARAM, Double.parseDouble(args[0]));
 		parameters.put(EvolutionaryAlgorithm.MAX_FUNCTION_EVALUATIONS_PARAM, Double.parseDouble(args[1]));
-		parameters.put(EvolutionaryAlgorithm.BIT_FLIP_PROBABILITY_PARAM, Double.parseDouble(args[2]));
+		parameters.put(BitFlipMutation.BIT_FLIP_PROBABILITY_PARAM, Double.parseDouble(args[2]));
 		
 		long randomSeed = System.currentTimeMillis();
 		if (args.length > 4) {

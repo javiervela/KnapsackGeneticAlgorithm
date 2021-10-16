@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Random;
 
 public class EvolutionaryAlgorithm {
-	public static final String BIT_FLIP_PROBABILITY_PARAM = "bitFlipProbability";
 	public static final String MAX_FUNCTION_EVALUATIONS_PARAM = "maxFunctionEvaluations";
 	public static final String RANDOM_SEED_PARAM = "randomSeed";
 	public static final String POPULATION_SIZE_PARAM = "populationSize";
@@ -33,7 +32,7 @@ public class EvolutionaryAlgorithm {
 	private void configureAlgorithm(Map<String, Double> parameters, Problem problem) {
 		populationSize = parameters.get(POPULATION_SIZE_PARAM).intValue();
 		maxFunctionEvaluations = parameters.get(MAX_FUNCTION_EVALUATIONS_PARAM).intValue();
-		double bitFLipProb = parameters.get(BIT_FLIP_PROBABILITY_PARAM);
+		double bitFLipProb = parameters.get(BitFlipMutation.BIT_FLIP_PROBABILITY_PARAM);
 		long randomSeed = parameters.get(RANDOM_SEED_PARAM).longValue();
 		
 		this.problem = problem; 
