@@ -7,8 +7,8 @@ public class BitFlipMutation implements Mutation {
 	private double bitFlipProb;
 	private Random rnd;
 	public static final String BIT_FLIP_PROBABILITY_PARAM = "bitFlipProbability";
-	
-	public BitFlipMutation (Random rnd, double bitFlipProb) {
+
+	public BitFlipMutation(Random rnd, double bitFlipProb) {
 		this.rnd = rnd;
 		this.bitFlipProb = bitFlipProb;
 	}
@@ -20,7 +20,7 @@ public class BitFlipMutation implements Mutation {
 		for (int i = 0; i < mutated.getChromosome().length; i++) {
 			if (rnd.nextDouble() < bitFlipProb) {
 				byte value = mutated.getChromosome()[i];
-				mutated.getChromosome()[i] = (byte)(1 - value);
+				mutated.getChromosome()[i] = (byte) (1 - value);
 			}
 		}
 		return mutated;
