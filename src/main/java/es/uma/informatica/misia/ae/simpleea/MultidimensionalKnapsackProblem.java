@@ -80,19 +80,20 @@ public class MultidimensionalKnapsackProblem implements Problem {
 		double totalProfit = 0.0;
 		double[] totalWeights = new double[numberConstraints];
 
-		for (int i = 0; i < binaryString.getChromosome().length; i++) {
-			if (binaryString.getChromosome()[i] == 1) {
-				totalProfit += profits.get(i);
-				for (int j = 0; j < numberConstraints; j++) {
-					totalWeights[j] += constraints.get(j).get(i);
+		for (int itemIndex = 0; itemIndex < binaryString.getChromosome().length; itemIndex++) {
+			if (binaryString.getChromosome()[itemIndex] == 1) {
+				totalProfit += profits.get(itemIndex);
+				for (int constraintIndex = 0; constraintIndex < numberConstraints; constraintIndex++) {
+					totalWeights[constraintIndex] += constraints.get(constraintIndex).get(itemIndex);
 				}
 			}
 		}
 
-		for (int j = 0; j < numberConstraints; j++) {
-			if (totalWeights[j] > capacities.get(j)) {
+		for (int constraintIndex = 0; constraintIndex < numberConstraints; constraintIndex++) {
+			if (totalWeights[constraintIndex] > capacities.get(constraintIndex)) {
 				// TODO what to do with not feasible solutions???
-				return 0.0; // If any constraint is violated, return 0
+				// If any constraint is violated, return 0
+				return 0.0;
 			}
 		}
 

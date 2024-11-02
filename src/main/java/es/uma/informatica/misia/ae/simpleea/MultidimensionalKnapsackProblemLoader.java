@@ -14,7 +14,8 @@ import java.util.List;
  * value, profits, constraints, and capacities.
  * 
  * The file format and source of the data can be found at:
- * http://people.brunel.ac.uk/~mastjjb/jeb/orlib/mknapinfo.html
+ * http://people.brunel.ac.uk/~mastjjb/jeb/orlib/mknapinfo.html and
+ * https://people.brunel.ac.uk/~mastjjb/jeb/orlib/files/mknap1.txt
  */
 public class MultidimensionalKnapsackProblemLoader {
 
