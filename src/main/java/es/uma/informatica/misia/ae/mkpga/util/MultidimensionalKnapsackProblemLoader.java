@@ -1,10 +1,12 @@
-package es.uma.informatica.misia.ae.mkpga.problem;
+package es.uma.informatica.misia.ae.mkpga.util;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import es.uma.informatica.misia.ae.mkpga.problem.MultidimensionalKnapsackProblem;
 
 /**
  * The MultidimensionalKnapsackProblemLoader class provides functionality to

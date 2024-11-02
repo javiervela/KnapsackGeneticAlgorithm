@@ -72,11 +72,10 @@ The program will output the best solution found, including its total profit and 
   - `problem/`: Contains classes representing the problem domain.
     - `Problem.java`: Interface for problem definitions.
     - `MultidimensionalKnapsackProblem.java`: Represents the multidimensional knapsack problem, including methods for evaluating solutions and generating random individuals.
-    - `MultidimensionalKnapsackProblemLoader.java`: Utility class for loading problem instances from a file.
     - `Individual.java`: Represents an individual solution in the population.
     - `BinaryString.java`: Represents the binary string chromosome of an individual.
   - `util/`: Contains utility classes and methods.
-    - `RandomUtils.java`: Utility class for random number generation and related functions.
+    - `MultidimensionalKnapsackProblemLoader.java`: Utility class for loading problem instances from a file.
 - `scripts/`:
   - `run.sh`: Bash script for running the program with different parameters.
   - `download_problem_data_mknap1.sh`: Bash script for downloading the problem instances.

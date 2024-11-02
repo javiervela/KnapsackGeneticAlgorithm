@@ -9,7 +9,7 @@ import es.uma.informatica.misia.ae.mkpga.algorithm.EvolutionaryAlgorithm;
 import es.uma.informatica.misia.ae.mkpga.algorithm.mutation.BitFlipMutation;
 import es.uma.informatica.misia.ae.mkpga.problem.Individual;
 import es.uma.informatica.misia.ae.mkpga.problem.MultidimensionalKnapsackProblem;
-import es.uma.informatica.misia.ae.mkpga.problem.MultidimensionalKnapsackProblemLoader;
+import es.uma.informatica.misia.ae.mkpga.util.MultidimensionalKnapsackProblemLoader;
 import es.uma.informatica.misia.ae.mkpga.problem.Problem;
 
 public class Main {
