@@ -38,7 +38,7 @@ mvn exec:java -Dexec.mainClass="es.uma.informatica.misia.ae.simpleea.Main" -Dexe
 ```
 
 - **population size**: Size of the population (e.g., `100`)
-- **function evaluations**: Maximum number of function evaluations (e.g., `10000`)
+- **function evaluations**: Maximum number of function evaluations (e.g., `10000`). If set to a negative value, the algorithm will run until the optimal solution is found.
 - **bitflip probability**: Probability of bitflip mutation (e.g., `0.01`)
 - **problem index**: Index of the problem instance in the `data/mknap1.txt` file (`0`-`6`)
 - **random seed**: (Optional) Seed for random number generation (e.g., `12345`)
@@ -58,6 +58,7 @@ The program will output the best solution found, including its total profit and 
   - `Crossover.java`, `SinglePointCrossover.java`: Classes for crossover operators.
   - `Mutation.java`, `BitFlipMutation.java`: Classes for mutation operators.
   - `Replacement.java`, `ElitistReplacement.java`: Classes for replacement operators.
+  - `StoppingCriterion.java`, `OptimalSolutionCriterion.java`, `MaxFunctionEvaluationsCriterion.java`: Classes for stopping criteria.
   - `MultidimensionalKnapsackProblemLoader.java`: Utility class for loading problem instances.
 - `scripts/`:
   - `run.sh`: Bash script for running the program with different parameters.

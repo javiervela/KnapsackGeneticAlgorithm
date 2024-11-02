@@ -13,4 +13,3 @@
   - Population statistics
 - Implement other selection, crossover, and mutation operators
 - Implement other replacement strategies
-- Implement other termination criteria

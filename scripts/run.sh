@@ -22,7 +22,11 @@ export MKP_FILE_PATH="$(pwd)/data/mknap1.txt"
 echo "Running the project with the following arguments:"
 echo "  (env) MKP_FILE_PATH: $MKP_FILE_PATH"
 echo "  Population size: $1"
-echo "  Function evaluations: $2"
+if [ "$2" -lt 0 ]; then
+	echo "  Function evaluations: $2 (until optimal solution is found)"
+else
+	echo "  Function evaluations: $2"
+fi
 echo "  Bitflip probability: $3"
 echo "  Problem index: $4"
 if [ -n "$5" ]; then
