@@ -1,4 +1,7 @@
-package es.uma.informatica.misia.ae.simpleea;
+package es.uma.informatica.misia.ae.mkpga.algorithm.stopping;
+
+import es.uma.informatica.misia.ae.mkpga.algorithm.EvolutionaryAlgorithm;
+import es.uma.informatica.misia.ae.mkpga.problem.Individual;
 
 /**
  * A stopping criterion that stops when the algorithm has found an optimal

@@ -1,9 +1,11 @@
-package es.uma.informatica.misia.ae.simpleea;
+package es.uma.informatica.misia.ae.mkpga.algorithm.replacement;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import es.uma.informatica.misia.ae.mkpga.problem.Individual;
 
 public class ElitistReplacement implements Replacement {
 

@@ -1,4 +1,6 @@
-package es.uma.informatica.misia.ae.simpleea;
+package es.uma.informatica.misia.ae.mkpga.algorithm.stopping;
+
+import es.uma.informatica.misia.ae.mkpga.algorithm.EvolutionaryAlgorithm;
 
 /**
  * Interface representing a stopping criterion for an evolutionary algorithm.

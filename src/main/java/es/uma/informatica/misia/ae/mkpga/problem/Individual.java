@@ -1,4 +1,4 @@
-package es.uma.informatica.misia.ae.simpleea;
+package es.uma.informatica.misia.ae.mkpga.problem;
 
 public class Individual {
 

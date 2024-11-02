@@ -1,10 +1,24 @@
-package es.uma.informatica.misia.ae.simpleea;
+package es.uma.informatica.misia.ae.mkpga.algorithm;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+
+import es.uma.informatica.misia.ae.mkpga.algorithm.crossover.Crossover;
+import es.uma.informatica.misia.ae.mkpga.algorithm.crossover.SinglePointCrossover;
+import es.uma.informatica.misia.ae.mkpga.algorithm.mutation.BitFlipMutation;
+import es.uma.informatica.misia.ae.mkpga.algorithm.mutation.Mutation;
+import es.uma.informatica.misia.ae.mkpga.algorithm.replacement.ElitistReplacement;
+import es.uma.informatica.misia.ae.mkpga.algorithm.replacement.Replacement;
+import es.uma.informatica.misia.ae.mkpga.algorithm.selection.BinaryTournament;
+import es.uma.informatica.misia.ae.mkpga.algorithm.selection.Selection;
+import es.uma.informatica.misia.ae.mkpga.algorithm.stopping.MaxFunctionEvaluationsCriterion;
+import es.uma.informatica.misia.ae.mkpga.algorithm.stopping.OptimalSolutionCriterion;
+import es.uma.informatica.misia.ae.mkpga.algorithm.stopping.StoppingCriterion;
+import es.uma.informatica.misia.ae.mkpga.problem.Individual;
+import es.uma.informatica.misia.ae.mkpga.problem.Problem;
 
 /**
  * The EvolutionaryAlgorithm class implements a simple evolutionary algorithm

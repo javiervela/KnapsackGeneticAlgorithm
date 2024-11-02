@@ -1,7 +1,9 @@
-package es.uma.informatica.misia.ae.simpleea;
+package es.uma.informatica.misia.ae.mkpga.algorithm.selection;
 
 import java.util.List;
 import java.util.Random;
+
+import es.uma.informatica.misia.ae.mkpga.problem.Individual;
 
 public class BinaryTournament implements Selection {
 	private Random rnd;

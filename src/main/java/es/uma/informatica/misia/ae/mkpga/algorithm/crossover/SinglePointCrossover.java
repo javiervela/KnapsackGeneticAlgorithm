@@ -1,6 +1,9 @@
-package es.uma.informatica.misia.ae.simpleea;
+package es.uma.informatica.misia.ae.mkpga.algorithm.crossover;
 
 import java.util.Random;
+
+import es.uma.informatica.misia.ae.mkpga.problem.BinaryString;
+import es.uma.informatica.misia.ae.mkpga.problem.Individual;
 
 public class SinglePointCrossover implements Crossover {
 

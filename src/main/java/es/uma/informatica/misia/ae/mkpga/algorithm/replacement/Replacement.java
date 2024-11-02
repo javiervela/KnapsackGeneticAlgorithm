@@ -1,6 +1,8 @@
-package es.uma.informatica.misia.ae.simpleea;
+package es.uma.informatica.misia.ae.mkpga.algorithm.replacement;
 
 import java.util.List;
+
+import es.uma.informatica.misia.ae.mkpga.problem.Individual;
 
 public interface Replacement {
 

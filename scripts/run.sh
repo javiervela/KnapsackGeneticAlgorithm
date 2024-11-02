@@ -34,5 +34,5 @@ if [ -n "$5" ]; then
 else
 	echo "  Random seed: Not provided"
 fi
-mvn exec:java -q -Dexec.mainClass="es.uma.informatica.misia.ae.simpleea.Main" \
+mvn exec:java -q -Dexec.mainClass="es.uma.informatica.misia.ae.mkpga.Main" \
 	-Dexec.args="$1 $2 $3 $4 ${5:-}"

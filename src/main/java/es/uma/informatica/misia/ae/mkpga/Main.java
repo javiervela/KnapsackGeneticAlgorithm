@@ -1,9 +1,16 @@
-package es.uma.informatica.misia.ae.simpleea;
+package es.uma.informatica.misia.ae.mkpga;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import es.uma.informatica.misia.ae.mkpga.algorithm.EvolutionaryAlgorithm;
+import es.uma.informatica.misia.ae.mkpga.algorithm.mutation.BitFlipMutation;
+import es.uma.informatica.misia.ae.mkpga.problem.Individual;
+import es.uma.informatica.misia.ae.mkpga.problem.MultidimensionalKnapsackProblem;
+import es.uma.informatica.misia.ae.mkpga.problem.MultidimensionalKnapsackProblemLoader;
+import es.uma.informatica.misia.ae.mkpga.problem.Problem;
 
 public class Main {
 
