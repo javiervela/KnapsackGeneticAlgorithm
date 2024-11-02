@@ -1,21 +1,20 @@
 package es.uma.informatica.misia.ae.mkpga;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import es.uma.informatica.misia.ae.mkpga.algorithm.EvolutionaryAlgorithm;
 import es.uma.informatica.misia.ae.mkpga.algorithm.mutation.BitFlipMutation;
 import es.uma.informatica.misia.ae.mkpga.problem.Individual;
 import es.uma.informatica.misia.ae.mkpga.problem.MultidimensionalKnapsackProblem;
 import es.uma.informatica.misia.ae.mkpga.util.MultidimensionalKnapsackProblemLoader;
 import es.uma.informatica.misia.ae.mkpga.problem.Problem;
+import es.uma.informatica.misia.ae.mkpga.util.MetricsCollector;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Main {
-
 	public static void main(String args[]) {
-
 		if (args.length < 4) {
 			System.err.println("Invalid number of arguments");
 			System.err.println(
@@ -23,16 +22,22 @@ public class Main {
 			return;
 		}
 
-		String filePath = System.getenv("MKP_FILE_PATH");
-		if (filePath == null) {
+		String problemFilePath = System.getenv("MKP_FILE_PATH");
+		if (problemFilePath == null) {
 			System.err.println("MKP_FILE_PATH environment variable not set");
+			return;
+		}
+
+		String resultsFilePath = System.getenv("RESULTS_FILE_PATH");
+		if (resultsFilePath == null) {
+			System.err.println("RESULTS_FILE_PATH environment variable not set");
 			return;
 		}
 
 		int problem_index = Integer.parseInt(args[3]);
 		List<MultidimensionalKnapsackProblem> problems;
 		try {
-			problems = MultidimensionalKnapsackProblemLoader.loadInstances(filePath);
+			problems = MultidimensionalKnapsackProblemLoader.loadInstances(problemFilePath);
 		} catch (IOException e) {
 			System.err.println("Error loading problem instances: " + e.getMessage());
 			return;
@@ -43,7 +48,10 @@ public class Main {
 		EvolutionaryAlgorithm evolutionaryAlgorithm = new EvolutionaryAlgorithm(parameters, problem);
 
 		Individual bestSolution = evolutionaryAlgorithm.run();
-		System.out.println(bestSolution);
+		System.out.println("Best Solution: " + bestSolution);
+
+		MetricsCollector metricsCollector = evolutionaryAlgorithm.getMetricsCollector();
+		metricsCollector.writeMetricsToJson(resultsFilePath);
 	}
 
 	private static Map<String, Double> readEAParameters(String[] args) {
@@ -59,5 +67,4 @@ public class Main {
 		parameters.put(EvolutionaryAlgorithm.RANDOM_SEED_PARAM, (double) randomSeed);
 		return parameters;
 	}
-
 }

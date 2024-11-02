@@ -1,8 +1,14 @@
 package es.uma.informatica.misia.ae.mkpga.util;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import es.uma.informatica.misia.ae.mkpga.problem.Individual;
 import es.uma.informatica.misia.ae.mkpga.problem.Problem;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -68,6 +74,31 @@ public class MetricsCollector {
 		return numberOfGenerations;
 	}
 
+	public void writeMetricsToJson(String filePath) {
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		JsonObject json = new JsonObject();
+
+		// Adding data to the JSON object
+		json.add("problem", gson.toJsonTree(problem));
+		json.add("parameters", gson.toJsonTree(parameters));
+
+		JsonArray bestSolutionsArray = new JsonArray();
+		for (Individual individual : bestSolutions) {
+			bestSolutionsArray.add(individual.getFitness());
+		}
+		json.add("bestSolutions", bestSolutionsArray);
+		json.addProperty("executionTime", getExecutionTime());
+		json.addProperty("numberOfEvaluations", numberOfEvaluations);
+		json.addProperty("numberOfGenerations", numberOfGenerations);
+
+		// Writing JSON to file
+		try (FileWriter file = new FileWriter(filePath)) {
+			gson.toJson(json, file);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
@@ -81,4 +112,4 @@ public class MetricsCollector {
 		sb.append('}');
 		return sb.toString();
 	}
-	}
+}

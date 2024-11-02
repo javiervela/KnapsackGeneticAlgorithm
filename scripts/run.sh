@@ -16,10 +16,16 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
+RESULTS_DIR="$(pwd)/results"
+if [ ! -d "$RESULTS_DIR" ]; then
+	mkdir -p "$RESULTS_DIR"
+fi
+export RESULTS_FILE_PATH="$RESULTS_DIR/$(date +'%Y%m%d_%H%M%S').json"
 export MKP_FILE_PATH="$(pwd)/data/mknap1.txt"
 
 # Step 2: Run the main class with provided arguments
 echo "Running the project with the following arguments:"
+echo "  (env) RESULTS_FILE_PATH: $RESULTS_FILE_PATH"
 echo "  (env) MKP_FILE_PATH: $MKP_FILE_PATH"
 echo "  Population size: $1"
 if [ "$2" -lt 0 ]; then

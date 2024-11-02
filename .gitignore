@@ -4,3 +4,6 @@ target/
 
 # VS Code specific files
 .vscode/
+
+# Results directory
+results/
