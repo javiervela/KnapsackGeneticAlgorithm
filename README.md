@@ -76,6 +76,7 @@ The program will output the best solution found, including its total profit and 
     - `BinaryString.java`: Represents the binary string chromosome of an individual.
   - `util/`: Contains utility classes and methods.
     - `MultidimensionalKnapsackProblemLoader.java`: Utility class for loading problem instances from a file.
+    - `MetricsCollector.java`: Utility class for collecting and storing metrics during the algorithm's execution.
 - `scripts/`:
   - `run.sh`: Bash script for running the program with different parameters.
   - `download_problem_data_mknap1.sh`: Bash script for downloading the problem instances.

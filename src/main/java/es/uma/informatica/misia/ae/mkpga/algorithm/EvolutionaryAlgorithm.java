@@ -19,6 +19,7 @@ import es.uma.informatica.misia.ae.mkpga.algorithm.stopping.OptimalSolutionCrite
 import es.uma.informatica.misia.ae.mkpga.algorithm.stopping.StoppingCriterion;
 import es.uma.informatica.misia.ae.mkpga.problem.Individual;
 import es.uma.informatica.misia.ae.mkpga.problem.Problem;
+import es.uma.informatica.misia.ae.mkpga.util.MetricsCollector;
 
 /**
  * The EvolutionaryAlgorithm class implements a simple evolutionary algorithm
@@ -61,8 +62,11 @@ public class EvolutionaryAlgorithm {
 	private Crossover recombination;
 	private StoppingCriterion stoppingCriterion;
 
+	private MetricsCollector metricsCollector;
+
 	// Constructor
 	public EvolutionaryAlgorithm(Map<String, Double> parameters, Problem problem) {
+		this.metricsCollector = new MetricsCollector(problem, parameters);
 		configureAlgorithm(parameters, problem);
 	}
 
@@ -91,10 +95,14 @@ public class EvolutionaryAlgorithm {
 
 	// Run the algorithm
 	public Individual run() {
+		metricsCollector.startTimer();
 		population = generateInitialPopulation();
 		functionEvaluations = 0;
 
 		evaluatePopulation(population);
+		metricsCollector.addBestSolution(bestSolution);
+		metricsCollector.incrementGenerations();
+
 		while (!shouldStop()) {
 			Individual parent1 = selection.selectParent(population);
 			Individual parent2 = selection.selectParent(population);
@@ -102,7 +110,10 @@ public class EvolutionaryAlgorithm {
 			child = mutation.apply(child);
 			evaluateIndividual(child);
 			population = replacement.replacement(population, Arrays.asList(child));
+			metricsCollector.addBestSolution(bestSolution);
+			metricsCollector.incrementGenerations();
 		}
+		metricsCollector.stopTimer();
 
 		return bestSolution;
 	}
@@ -112,6 +123,7 @@ public class EvolutionaryAlgorithm {
 		double fitness = problem.evaluate(individual);
 		individual.setFitness(fitness);
 		functionEvaluations++;
+		metricsCollector.incrementEvaluations();
 		checkIfBest(individual);
 	}
 
@@ -150,5 +162,9 @@ public class EvolutionaryAlgorithm {
 
 	public Individual getBestSolution() {
 		return bestSolution;
+	}
+
+	public MetricsCollector getMetricsCollector() {
+		return metricsCollector;
 	}
 }
