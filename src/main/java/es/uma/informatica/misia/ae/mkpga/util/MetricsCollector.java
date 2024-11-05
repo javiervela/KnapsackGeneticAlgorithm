@@ -16,7 +16,7 @@ import java.util.Map;
 public class MetricsCollector {
 	private Problem problem;
 	private Map<String, Double> parameters;
-	private List<Individual> bestSolutions;
+	private List<Individual> generationBestIndividuals;
 	private long startTime;
 	private long endTime;
 	private int numberOfEvaluations;
@@ -25,7 +25,7 @@ public class MetricsCollector {
 	public MetricsCollector(Problem problem, Map<String, Double> parameters) {
 		this.problem = problem;
 		this.parameters = parameters;
-		this.bestSolutions = new ArrayList<>();
+		this.generationBestIndividuals = new ArrayList<>();
 		this.numberOfEvaluations = 0;
 		this.numberOfGenerations = 0;
 	}
@@ -38,8 +38,8 @@ public class MetricsCollector {
 		this.endTime = System.currentTimeMillis();
 	}
 
-	public void addBestSolution(Individual bestSolution) {
-		this.bestSolutions.add(bestSolution);
+	public void addGenerationBestIndividual(Individual generationBestIndividual) {
+		this.generationBestIndividuals.add(generationBestIndividual);
 	}
 
 	public void incrementEvaluations() {
@@ -62,8 +62,15 @@ public class MetricsCollector {
 		return parameters;
 	}
 
-	public List<Individual> getBestSolutions() {
-		return bestSolutions;
+	public List<Individual> getGenerationBestIndividuals() {
+		return generationBestIndividuals;
+	}
+
+	public Individual getBestIndividual() {
+		if (generationBestIndividuals.isEmpty()) {
+			return null;
+		}
+		return generationBestIndividuals.get(generationBestIndividuals.size() - 1);
 	}
 
 	public int getNumberOfEvaluations() {
@@ -79,17 +86,17 @@ public class MetricsCollector {
 		JsonObject json = new JsonObject();
 
 		// Adding data to the JSON object
-		json.add("problem", gson.toJsonTree(problem));
-		json.add("parameters", gson.toJsonTree(parameters));
-
-		JsonArray bestSolutionsArray = new JsonArray();
-		for (Individual individual : bestSolutions) {
-			bestSolutionsArray.add(individual.getFitness());
+		JsonArray generationBestIndividualsArray = new JsonArray();
+		for (Individual individual : generationBestIndividuals) {
+			generationBestIndividualsArray.add(individual.getFitness());
 		}
-		json.add("bestSolutions", bestSolutionsArray);
+		json.add("bestIndividual", gson.toJsonTree(getBestIndividual()));
 		json.addProperty("executionTime", getExecutionTime());
 		json.addProperty("numberOfEvaluations", numberOfEvaluations);
 		json.addProperty("numberOfGenerations", numberOfGenerations);
+		json.add("problem", gson.toJsonTree(problem));
+		json.add("parameters", gson.toJsonTree(parameters));
+		json.add("generationBestIndividuals", generationBestIndividualsArray);
 
 		// Writing JSON to file
 		try (FileWriter file = new FileWriter(filePath)) {
@@ -103,12 +110,13 @@ public class MetricsCollector {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("MetricsCollector{\n");
-		sb.append("  problem=").append(problem).append(",\n");
-		sb.append("  parameters=").append(parameters).append(",\n");
-		sb.append("  bestSolutions=").append(bestSolutions).append(",\n");
+		sb.append("  bestIndividual=").append(getBestIndividual()).append(",\n");
 		sb.append("  executionTime=").append(getExecutionTime()).append(" ms,\n");
 		sb.append("  numberOfEvaluations=").append(numberOfEvaluations).append(",\n");
 		sb.append("  numberOfGenerations=").append(numberOfGenerations).append("\n");
+		sb.append("  problem=").append(problem).append(",\n");
+		sb.append("  parameters=").append(parameters).append(",\n");
+		sb.append("  generationBestIndividuals=").append(generationBestIndividuals).append(",\n");
 		sb.append('}');
 		return sb.toString();
 	}

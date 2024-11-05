@@ -3,7 +3,6 @@
 - Handle solution feasibility
 - Improve stdout output
 - Output enhancements (JSON/YAML) for future analysis:
-  - Intermediate solutions
   - Population statistics
 - Implement other selection, crossover, and mutation operators
 - Implement other replacement strategies
