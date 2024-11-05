@@ -2,7 +2,7 @@
 
 # Check if the correct number of arguments is provided
 if [ "$#" -lt 4 ]; then
-	echo "Usage: ./run.sh <population size> <function evaluations> <bitflip probability> <problem index> [<random seed>]"
+	echo "Usage: ./run.sh <population size> <function evaluations> <mutation probability> <problem index> [<random seed>]"
 	exit 1
 fi
 
@@ -33,7 +33,7 @@ if [ "$2" -lt 0 ]; then
 else
 	echo "  Function evaluations: $2"
 fi
-echo "  Bitflip probability: $3"
+echo "  mutation probability: $3"
 echo "  Problem index: $4"
 if [ -n "$5" ]; then
 	echo "  Random seed: $5"

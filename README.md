@@ -26,10 +26,10 @@ This will download necessary dependencies and build the project.
 The main program requires four arguments and accepts an optional fifth:
 
 ```bash
-mvn exec:java -Dexec.mainClass="es.uma.informatica.misia.ae.mkpga.Main" -Dexec.args="<population size> <function evaluations> <bitflip probability> <problem index> [<random seed>]"
+mvn exec:java -Dexec.mainClass="es.uma.informatica.misia.ae.mkpga.Main" -Dexec.args="<population size> <function evaluations> <mutation probability> <problem index> [<random seed>]"
 ```
 
-Replace `<population size>`, `<function evaluations>`, `<bitflip probability>`, `<problem index>`, and `[<random seed>]` with your values.
+Replace `<population size>`, `<function evaluations>`, `<mutation probability>`, `<problem index>`, and `[<random seed>]` with your values.
 
 ### Example
 
@@ -39,7 +39,7 @@ mvn exec:java -Dexec.mainClass="es.uma.informatica.misia.ae.mkpga.Main" -Dexec.a
 
 - **population size**: Size of the population (e.g., `100`)
 - **function evaluations**: Maximum number of function evaluations (e.g., `10000`). If set to a negative value, the algorithm will run until the optimal solution is found.
-- **bitflip probability**: Probability of bitflip mutation (e.g., `0.01`)
+- **mutation probability**: Probability of mutation (e.g., `0.01`)
 - **problem index**: Index of the problem instance in the `data/mknap1.txt` file (`0`-`6`)
 - **random seed**: (Optional) Seed for random number generation (e.g., `12345`)
 

@@ -1,7 +1,7 @@
 package es.uma.informatica.misia.ae.mkpga;
 
 import es.uma.informatica.misia.ae.mkpga.algorithm.EvolutionaryAlgorithm;
-import es.uma.informatica.misia.ae.mkpga.algorithm.mutation.BitFlipMutation;
+import es.uma.informatica.misia.ae.mkpga.algorithm.mutation.Mutation;
 import es.uma.informatica.misia.ae.mkpga.problem.Individual;
 import es.uma.informatica.misia.ae.mkpga.problem.MultidimensionalKnapsackProblem;
 import es.uma.informatica.misia.ae.mkpga.util.MultidimensionalKnapsackProblemLoader;
@@ -58,7 +58,7 @@ public class Main {
 		Map<String, Double> parameters = new HashMap<>();
 		parameters.put(EvolutionaryAlgorithm.POPULATION_SIZE_PARAM, Double.parseDouble(args[0]));
 		parameters.put(EvolutionaryAlgorithm.MAX_FUNCTION_EVALUATIONS_PARAM, Double.parseDouble(args[1]));
-		parameters.put(BitFlipMutation.BIT_FLIP_PROBABILITY_PARAM, Double.parseDouble(args[2]));
+		parameters.put(Mutation.MUTATION_PROBABILITY_PARAMETER, Double.parseDouble(args[2]));
 
 		long randomSeed = System.currentTimeMillis();
 		if (args.length > 4) {

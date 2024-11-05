@@ -7,13 +7,12 @@ import es.uma.informatica.misia.ae.mkpga.problem.Individual;
 
 public class BitFlipMutation implements Mutation {
 
-	private double bitFlipProb;
+	private double probability;
 	private Random rnd;
-	public static final String BIT_FLIP_PROBABILITY_PARAM = "bitFlipProbability";
 
-	public BitFlipMutation(Random rnd, double bitFlipProb) {
+	public BitFlipMutation(Random rnd, double probability) {
 		this.rnd = rnd;
-		this.bitFlipProb = bitFlipProb;
+		this.probability = probability;
 	}
 
 	@Override
@@ -21,7 +20,7 @@ public class BitFlipMutation implements Mutation {
 		BinaryString original = (BinaryString) individual;
 		BinaryString mutated = new BinaryString(original);
 		for (int i = 0; i < mutated.getChromosome().length; i++) {
-			if (rnd.nextDouble() < bitFlipProb) {
+			if (rnd.nextDouble() < probability) {
 				byte value = mutated.getChromosome()[i];
 				mutated.getChromosome()[i] = (byte) (1 - value);
 			}
@@ -29,12 +28,12 @@ public class BitFlipMutation implements Mutation {
 		return mutated;
 	}
 
-	public double getBitFlipProb() {
-		return bitFlipProb;
+	public double getProbability() {
+		return probability;
 	}
 
-	public void setBitFlipProb(double bitFlipProb) {
-		this.bitFlipProb = bitFlipProb;
+	public void setProbability(double probability) {
+		this.probability = probability;
 	}
 
 }
