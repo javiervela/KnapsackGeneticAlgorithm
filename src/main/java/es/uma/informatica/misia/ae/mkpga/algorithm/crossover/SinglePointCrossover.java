@@ -8,13 +8,19 @@ import es.uma.informatica.misia.ae.mkpga.problem.Individual;
 public class SinglePointCrossover implements Crossover {
 
 	private Random rnd;
+	private double crossoverProbability;
 
-	public SinglePointCrossover(Random rnd) {
+	public SinglePointCrossover(Random rnd, double crossoverProbability) {
 		this.rnd = rnd;
+		this.crossoverProbability = crossoverProbability;
 	}
 
 	@Override
 	public BinaryString apply(Individual individual1, Individual individual2) {
+		if (rnd.nextDouble() < crossoverProbability) {
+			return (BinaryString) individual1;
+		}
+
 		BinaryString binaryParent1 = (BinaryString) individual1;
 		BinaryString binaryParent2 = (BinaryString) individual2;
 
@@ -26,5 +32,4 @@ public class SinglePointCrossover implements Crossover {
 		}
 		return child;
 	}
-
 }

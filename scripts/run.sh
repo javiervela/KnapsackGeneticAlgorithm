@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Check if the correct number of arguments is provided
-if [ "$#" -lt 4 ]; then
-	echo "Usage: ./run.sh <population size> <function evaluations> <mutation probability> <problem index> [<random seed>]"
+if [ "$#" -lt 5 ]; then
+	echo "Usage: ./run.sh <population size> <function evaluations> <crossover probability> <mutation probability> <problem index> [<random seed>]"
 	exit 1
 fi
 
@@ -33,12 +33,13 @@ if [ "$2" -lt 0 ]; then
 else
 	echo "  Function evaluations: $2"
 fi
-echo "  mutation probability: $3"
-echo "  Problem index: $4"
-if [ -n "$5" ]; then
-	echo "  Random seed: $5"
+echo "  crossover probability: $3"
+echo "  mutation probability: $4"
+echo "  Problem index: $5"
+if [ -n "$6" ]; then
+	echo "  Random seed: $6"
 else
 	echo "  Random seed: Not provided"
 fi
 mvn exec:java -q -Dexec.mainClass="es.uma.informatica.misia.ae.mkpga.Main" \
-	-Dexec.args="$1 $2 $3 $4 ${5:-}"
+	-Dexec.args="$1 $2 $3 $4 $5 ${6:-}"

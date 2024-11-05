@@ -74,7 +74,8 @@ public class EvolutionaryAlgorithm {
 	private void configureAlgorithm(Map<String, Double> parameters, Problem problem) {
 		populationSize = parameters.get(POPULATION_SIZE_PARAM).intValue();
 		maxFunctionEvaluations = parameters.get(MAX_FUNCTION_EVALUATIONS_PARAM).intValue();
-		double mutationProbability = parameters.getOrDefault(Mutation.MUTATION_PROBABILITY_PARAMETER, 1.0);
+		double mutationProbability = parameters.get(Mutation.MUTATION_PROBABILITY_PARAMETER);
+		double crossoverProbability = parameters.get(Crossover.CROSSOVER_PROBABILITY_PARAM);
 		long randomSeed = parameters.get(RANDOM_SEED_PARAM).longValue();
 
 		this.problem = problem;
@@ -83,8 +84,9 @@ public class EvolutionaryAlgorithm {
 
 		selection = new BinaryTournament(rnd);
 		replacement = new ElitistReplacement();
-		mutation = new BitFlipMutation(rnd, mutationProbability); // TODO - Make mutation method configurable
-		recombination = new SinglePointCrossover(rnd); // TODO - Make crossover method configurable
+		// TODO - Make mutation and crossover method configurable
+		mutation = new BitFlipMutation(rnd, mutationProbability);
+		recombination = new SinglePointCrossover(rnd, crossoverProbability);
 
 		if (maxFunctionEvaluations >= 0) {
 			stoppingCriterion = new MaxFunctionEvaluationsCriterion(maxFunctionEvaluations);
