@@ -89,8 +89,10 @@ public class EvolutionaryAlgorithm {
 		recombination = new SinglePointCrossover(rnd, crossoverProbability);
 
 		if (maxFunctionEvaluations >= 0) {
+			// TODO - Should we stop when the optimal solution is found?
 			stoppingCriterion = new MaxFunctionEvaluationsCriterion(maxFunctionEvaluations);
 		} else {
+			// TODO - Should we stop if time limit is reached?
 			stoppingCriterion = new OptimalSolutionCriterion(problem.getOptimalValue());
 		}
 	}

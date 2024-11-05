@@ -120,4 +120,13 @@ public class MetricsCollector {
 		sb.append('}');
 		return sb.toString();
 	}
+
+	public void writeSummaryReport() {
+		System.out.printf("Best Individual: %s%s, Execution Time: %d ms, Evaluations: %d, Generations: %d%n",
+				getBestIndividual().getFitness(),
+				(getBestIndividual() != null && getBestIndividual().getFitness() == problem.getOptimalValue())
+						? " (Optimum)"
+						: "",
+				getExecutionTime(), numberOfEvaluations, numberOfGenerations);
+	}
 }

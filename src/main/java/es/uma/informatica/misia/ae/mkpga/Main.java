@@ -43,15 +43,16 @@ public class Main {
 			System.err.println("Error loading problem instances: " + e.getMessage());
 			return;
 		}
+
 		Problem problem = problems.get(problem_index);
 
 		Map<String, Double> parameters = readEAParameters(args);
 		EvolutionaryAlgorithm evolutionaryAlgorithm = new EvolutionaryAlgorithm(parameters, problem);
 
-		Individual bestSolution = evolutionaryAlgorithm.run();
-		System.out.println("Best Solution: " + bestSolution);
+		evolutionaryAlgorithm.run();
 
 		MetricsCollector metricsCollector = evolutionaryAlgorithm.getMetricsCollector();
+		metricsCollector.writeSummaryReport();
 		metricsCollector.writeMetricsToJson(resultsFilePath);
 	}
 
