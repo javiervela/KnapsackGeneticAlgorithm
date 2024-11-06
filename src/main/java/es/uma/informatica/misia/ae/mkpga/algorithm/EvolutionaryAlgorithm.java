@@ -106,7 +106,6 @@ public class EvolutionaryAlgorithm {
 
 		evaluatePopulation(population);
 		metricsCollector.addGenerationBestIndividual(bestSolution);
-		metricsCollector.incrementGenerations();
 
 		while (!shouldStop()) {
 			Individual parent1 = selection.selectParent(population);
@@ -116,7 +115,6 @@ public class EvolutionaryAlgorithm {
 			evaluateIndividual(child);
 			population = replacement.replacement(population, Arrays.asList(child));
 			metricsCollector.addGenerationBestIndividual(bestSolution);
-			metricsCollector.incrementGenerations();
 		}
 		metricsCollector.stopTimer();
 

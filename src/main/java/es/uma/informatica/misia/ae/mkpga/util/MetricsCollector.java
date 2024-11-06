@@ -10,13 +10,14 @@ import es.uma.informatica.misia.ae.mkpga.problem.Problem;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class MetricsCollector {
 	private Problem problem;
 	private Map<String, Double> parameters;
-	private List<Individual> generationBestIndividuals;
+	private List<Map<String, Object>> generationBestIndividuals;
 	private long startTime;
 	private long endTime;
 	private int numberOfEvaluations;
@@ -39,7 +40,40 @@ public class MetricsCollector {
 	}
 
 	public void addGenerationBestIndividual(Individual generationBestIndividual) {
-		this.generationBestIndividuals.add(generationBestIndividual);
+		int generationNumber = numberOfGenerations;
+		this.incrementGenerations();
+
+		if (!generationBestIndividuals.isEmpty()) {
+			// Get the last entry in the list
+			Map<String, Object> lastIndividualData = generationBestIndividuals
+					.get(generationBestIndividuals.size() - 1);
+			Individual lastIndividual = (Individual) lastIndividualData.get("bestIndividual");
+
+			// Check if the fitness is the same as the last entry
+			if (lastIndividual.getFitness() == generationBestIndividual.getFitness()) {
+				// Check if there is a second to last entry
+				if (generationBestIndividuals.size() != 1) {
+					Map<String, Object> secondToLastIndividualData = generationBestIndividuals
+							.get(generationBestIndividuals.size() - 2);
+					Individual secondToLastIndividual = (Individual) secondToLastIndividualData.get("bestIndividual");
+					// Check if the fitness is the same as the second to last entry
+					if (secondToLastIndividual.getFitness() == generationBestIndividual.getFitness()) {
+						// Update the last individual in the sequence
+						lastIndividualData.put("generationNumber", generationNumber);
+						lastIndividualData.put("bestIndividual", generationBestIndividual);
+
+						return;
+					}
+				}
+			}
+		}
+
+		// Add the current individual
+		Map<String, Object> individualData = new HashMap<>();
+		individualData.put("generationNumber", generationNumber);
+		individualData.put("bestIndividual", generationBestIndividual);
+		this.generationBestIndividuals.add(individualData);
+
 	}
 
 	public void incrementEvaluations() {
@@ -65,7 +99,7 @@ public class MetricsCollector {
 		return parameters;
 	}
 
-	public List<Individual> getGenerationBestIndividuals() {
+	public List<Map<String, Object>> getGenerationBestIndividuals() {
 		return generationBestIndividuals;
 	}
 
@@ -73,7 +107,8 @@ public class MetricsCollector {
 		if (generationBestIndividuals.isEmpty()) {
 			return null;
 		}
-		return generationBestIndividuals.get(generationBestIndividuals.size() - 1);
+		return (Individual) generationBestIndividuals.get(generationBestIndividuals.size() - 1)
+				.get("bestIndividual");
 	}
 
 	public int getNumberOfEvaluations() {
@@ -90,8 +125,12 @@ public class MetricsCollector {
 
 		// Adding data to the JSON object
 		JsonArray generationBestIndividualsArray = new JsonArray();
-		for (Individual individual : generationBestIndividuals) {
-			generationBestIndividualsArray.add(individual.getFitness());
+		for (Map<String, Object> individualData : generationBestIndividuals) {
+			JsonObject individualJson = new JsonObject();
+			individualJson.addProperty("generationNumber", (Integer) individualData.get("generationNumber"));
+			Individual individual = (Individual) individualData.get("bestIndividual");
+			individualJson.addProperty("bestIndividualFitness", (Double) individual.getFitness());
+			generationBestIndividualsArray.add(individualJson);
 		}
 		json.add("bestIndividual", gson.toJsonTree(getBestIndividual()));
 		json.addProperty("executionTime", getExecutionTime());
