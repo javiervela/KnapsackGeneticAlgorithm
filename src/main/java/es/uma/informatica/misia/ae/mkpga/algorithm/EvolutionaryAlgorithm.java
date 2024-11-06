@@ -47,6 +47,8 @@ public class EvolutionaryAlgorithm {
 	public static final String RANDOM_SEED_PARAM = "randomSeed";
 	public static final String POPULATION_SIZE_PARAM = "populationSize";
 
+	private static final long STOPPING_LIMIT_TIME = 60000;
+
 	private Problem problem;
 	private int functionEvaluations;
 	private int maxFunctionEvaluations;
@@ -92,8 +94,7 @@ public class EvolutionaryAlgorithm {
 			// TODO - Should we stop when the optimal solution is found?
 			stoppingCriterion = new MaxFunctionEvaluationsCriterion(maxFunctionEvaluations);
 		} else {
-			// TODO - Should we stop if time limit is reached?
-			stoppingCriterion = new OptimalSolutionCriterion(problem.getOptimalValue());
+			stoppingCriterion = new OptimalSolutionCriterion(problem.getOptimalValue(), STOPPING_LIMIT_TIME);
 		}
 	}
 

@@ -9,14 +9,17 @@ import es.uma.informatica.misia.ae.mkpga.problem.Individual;
  */
 public class OptimalSolutionCriterion implements StoppingCriterion {
 	private final double optimalValue;
+	private final long timeLimit;
 
-	public OptimalSolutionCriterion(double optimalValue) {
+	public OptimalSolutionCriterion(double optimalValue, long timeLimit) {
 		this.optimalValue = optimalValue;
+		this.timeLimit = timeLimit;
 	}
 
 	@Override
 	public boolean isSatisfied(EvolutionaryAlgorithm algorithm) {
 		Individual bestSolution = algorithm.getBestSolution();
-		return bestSolution != null && bestSolution.getFitness() >= optimalValue;
+		long executionTime = algorithm.getMetricsCollector().getExecutionTime();
+		return bestSolution != null && bestSolution.getFitness() >= optimalValue || executionTime >= timeLimit;
 	}
 }

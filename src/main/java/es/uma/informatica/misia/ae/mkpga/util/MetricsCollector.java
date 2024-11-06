@@ -51,6 +51,9 @@ public class MetricsCollector {
 	}
 
 	public long getExecutionTime() {
+		if (endTime == 0) {
+			return System.currentTimeMillis() - startTime;
+		}
 		return endTime - startTime;
 	}
 
