@@ -48,8 +48,26 @@ mvn exec:java -Dexec.mainClass="es.uma.informatica.misia.ae.mkpga.Main" -Dexec.a
 
 The program will output the best solution found, including its total profit and the items selected.
 
+## Analysis
+
+The project includes Python scripts to analyze the results of the experiments. The scripts calculate and plot statistics.
+
+### Requirements
+
+- **Python**
+- **Poetry**: Python dependency management tool
+
+### Install Dependencies
+
+```bash
+poetry install
+```
+
 ## Project Structure
 
+- `pom.xml`: Maven project configuration file.
+- `pyproject.toml`: Poetry project configuration file.
+- `poetry.lock`: Poetry lock file.
 - `src/main/java/es/uma/informatica/misia/ae/mkpga/`: Contains the core classes for the evolutionary algorithm implementation.
   - `Main.java`: Entry point for the program, which parses parameters and initiates the algorithm.
   - `algorithm/`: Contains classes related to the genetic algorithm's structure and processes.
@@ -81,6 +99,14 @@ The program will output the best solution found, including its total profit and 
 - `scripts/`:
   - `run.sh`: Bash script for running the program with different parameters.
   - `download_problem_data_mknap1.sh`: Bash script for downloading the problem instances.
+  - `experiments/experiment_all.sh`: Bash script for running experiments with different parameter configurations.
+  - `analysis/`: Python scripts to analyze the results of the experiments.
+    - `0_load_results.py`: Load the results to the `results.parquet` file.
+    - `1_exec_time_stats_calculate.py`: Calculate execution time statistics.
+    - `1_fitness_stats_calculate.py`: Calculate fitness value statistics.
+    - `2_exec_time_stats_plot.py`: Plot execution time statistics.
+    - `2_fitness_stats_plot.py`: Plot fitness value statistics.
 - `data/`:
   - `mknap1.txt`: Problem instances for the multidimensional knapsack problem.
   - `README.md`: Description of the problem instances.
+  - `results.parquet`: Parquet file to store the results of the experiments.
