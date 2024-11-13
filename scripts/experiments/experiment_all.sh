@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Using package instead of install to create JAR file and avoid executing through Maven
-mvn clean package -q
+mvn clean install package -q
 if [ $? -ne 0 ]; then
 	echo "Build failed. Exiting."
 	exit 1
@@ -14,19 +14,23 @@ export MKP_FILE_PATH="$(pwd)/data/mknap1.txt"
 
 # Algorithm parameters
 POPULATION_SIZE=10
-FUNCTION_EVALUATIONS=1000
-CROSSOVER_PROBABILITIES=(0.1 0.3 0.5 0.7 0.9)
-MUTATION_PROBABILITIES=(0.01 0.05 0.1 0.2 0.3)
+FUNCTION_EVALUATIONS=1000 # (1000 10000 -1)
+CROSSOVER_PROBABILITIES=(0.1 0.3 0.5 0.7 0.9 1)
+MUTATION_PROBABILITIES=(0.01 0.05 0.1 0.2 0.3 0.5)
 
 for problem_index in "${PROBLEM_INDEXES[@]}"; do
-
 	for crossover_probability in "${CROSSOVER_PROBABILITIES[@]}"; do
 		for mutation_probability in "${MUTATION_PROBABILITIES[@]}"; do
-			RESULTS_DIR="$(pwd)/results/experiment_all/problem_$problem_index/crossover_$crossover_probability/mutation_$mutation_probability/"
+			RESULTS_DIR="$(pwd)/results/experiment_all/function_evaluations_$FUNCTION_EVALUATIONS/problem_$problem_index/crossover_$crossover_probability/mutation_$mutation_probability"
 			mkdir -p "$RESULTS_DIR"
 
 			for execution_i in "${EXECUTIONS_N[@]}"; do
 				export RESULTS_FILE_PATH="$RESULTS_DIR/results_$execution_i.json"
+
+				if [ -f "$RESULTS_FILE_PATH" ]; then
+					echo "Results file $RESULTS_FILE_PATH already exists. Skipping execution."
+					continue
+				fi
 
 				CROSSOVER_PROBABILITY=$crossover_probability
 				MUTATION_PROBABILITY=$mutation_probability
