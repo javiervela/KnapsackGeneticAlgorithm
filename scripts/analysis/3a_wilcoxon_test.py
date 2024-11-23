@@ -11,73 +11,62 @@ RESULTS_FILE = "./data/results.parquet"
 # Load data
 df = pd.read_parquet(RESULTS_FILE)
 
-# Iterate over different evaluation counts
+# Loop through evaluation levels
 for evaluations in FUNCTION_EVALUATIONS:
     ANALYSIS_DIR = os.path.join("analysis", f"{evaluations}_evaluations")
     os.makedirs(ANALYSIS_DIR, exist_ok=True)
     PVALUES_CSV = os.path.join(ANALYSIS_DIR, "wilcoxon_pvalues.csv")
 
-    # Filter data for the current FUNCTION_EVALUATIONS
+    # Filter data for the current evaluations level
     df_filtered = df[df["functionEvaluations"] == evaluations]
 
-    # Get unique parameter combinations of crossover and mutation probabilities
-    parameter_combinations = df_filtered[
-        ["crossoverProbability", "mutationProbability"]
-    ].drop_duplicates()
-    parameter_combinations = parameter_combinations.sort_values(
-        by=["crossoverProbability", "mutationProbability"]
-    )
+    # Prepare a list to store p-values
+    pvalues = []
 
-    # Prepare to store p-values
-    pvalues_data = []
+    # Loop through each problem index
+    for problem_index in PROBLEM_INDEXES:
+        # Filter data for the current problem index
+        df_problem = df_filtered[df_filtered["problemIndex"] == problem_index]
 
-    # Iterate over all pairs of parameter combinations
-    for param1, param2 in combinations(
-        parameter_combinations.itertuples(index=False), 2
-    ):
-        param1_crossover, param1_mutation = param1
-        param2_crossover, param2_mutation = param2
+        # Get all unique parameter combinations
+        parameter_combinations = df_problem.groupby(
+            ["crossoverProbability", "mutationProbability"]
+        ).groups.keys()
 
-        # Filter data for the two parameter combinations
-        group1 = df_filtered[
-            (df_filtered["crossoverProbability"] == param1_crossover)
-            & (df_filtered["mutationProbability"] == param1_mutation)
-        ]
+        # Perform pairwise Wilcoxon tests for each combination
+        for comb1, comb2 in combinations(parameter_combinations, 2):
+            # Extract fitness values for the two parameter combinations
+            fitness1 = df_problem[
+                (df_problem["crossoverProbability"] == comb1[0])
+                & (df_problem["mutationProbability"] == comb1[1])
+            ]["bestIndividual.fitness"]
 
-        group2 = df_filtered[
-            (df_filtered["crossoverProbability"] == param2_crossover)
-            & (df_filtered["mutationProbability"] == param2_mutation)
-        ]
+            fitness2 = df_problem[
+                (df_problem["crossoverProbability"] == comb2[0])
+                & (df_problem["mutationProbability"] == comb2[1])
+            ]["bestIndividual.fitness"]
 
-        # Ensure both groups have results for all problem instances
-        if set(group1["problemIndex"]) != set(PROBLEM_INDEXES) or set(
-            group2["problemIndex"]
-        ) != set(PROBLEM_INDEXES):
-            continue
+            # Perform Wilcoxon test
+            try:
+                stat, pvalue = wilcoxon(fitness1, fitness2, alternative="two-sided")
+            except ValueError:
+                # Handle cases where the fitness values are identical or have insufficient data
+                pvalue = float("nan")
 
-        # Pair samples by problemIndex
-        fitness1 = group1.sort_values("problemIndex")["bestIndividual.fitness"].values
-        fitness2 = group2.sort_values("problemIndex")["bestIndividual.fitness"].values
+            # Store results
+            pvalues.append(
+                {
+                    "problemIndex": problem_index,
+                    "comb1_crossover": comb1[0],
+                    "comb1_mutation": comb1[1],
+                    "comb2_crossover": comb2[0],
+                    "comb2_mutation": comb2[1],
+                    "pvalue": pvalue,
+                }
+            )
 
-        # Perform Wilcoxon signed-rank test
-        try:
-            stat, pvalue = wilcoxon(fitness1, fitness2)
-        except ValueError:
-            # Wilcoxon test requires paired data; skip if there's an issue
-            continue
+    # Convert results to a DataFrame and save as CSV
+    pvalues_df = pd.DataFrame(pvalues)
+    pvalues_df.to_csv(PVALUES_CSV, index=False)
 
-        # Store results
-        pvalues_data.append(
-            {
-                "param1_crossover": param1_crossover,
-                "param1_mutation": param1_mutation,
-                "param2_crossover": param2_crossover,
-                "param2_mutation": param2_mutation,
-                "pvalue": pvalue,
-            }
-        )
-
-    # Save p-values to CSV
-    if pvalues_data:
-        pvalues_df = pd.DataFrame(pvalues_data)
-        pvalues_df.to_csv(PVALUES_CSV, index=False)
+    print(f"P-values for {evaluations} evaluations saved to {PVALUES_CSV}")
