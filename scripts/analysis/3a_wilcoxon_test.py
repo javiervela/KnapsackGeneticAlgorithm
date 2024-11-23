@@ -1,10 +1,7 @@
 import os
 import pandas as pd
 from scipy.stats import wilcoxon
-import itertools
-from tqdm import tqdm
-import matplotlib.pyplot as plt
-import seaborn as sns
+from itertools import combinations
 
 # Define constants
 FUNCTION_EVALUATIONS = [-1, 1000, 10000]
@@ -14,59 +11,73 @@ RESULTS_FILE = "./data/results.parquet"
 # Load data
 df = pd.read_parquet(RESULTS_FILE)
 
+# Iterate over different evaluation counts
 for evaluations in FUNCTION_EVALUATIONS:
     ANALYSIS_DIR = os.path.join("analysis", f"{evaluations}_evaluations")
-    PLOTS_DIR = os.path.join(ANALYSIS_DIR, "plots/wilcoxon")
+    os.makedirs(ANALYSIS_DIR, exist_ok=True)
     PVALUES_CSV = os.path.join(ANALYSIS_DIR, "wilcoxon_pvalues.csv")
-    os.makedirs(PLOTS_DIR, exist_ok=True)
 
-    # Filter data for specific function evaluations
+    # Filter data for the current FUNCTION_EVALUATIONS
     df_filtered = df[df["functionEvaluations"] == evaluations]
 
-    # Prepare data for Wilcoxon test
-    unique_params = df_filtered[
+    # Get unique parameter combinations of crossover and mutation probabilities
+    parameter_combinations = df_filtered[
         ["crossoverProbability", "mutationProbability"]
     ].drop_duplicates()
-    parameter_pairs = list(
-        itertools.combinations(unique_params.itertuples(index=False), 2)
+    parameter_combinations = parameter_combinations.sort_values(
+        by=["crossoverProbability", "mutationProbability"]
     )
 
+    # Prepare to store p-values
     pvalues_data = []
 
-    for problem_index in PROBLEM_INDEXES:
-        problem_df = df_filtered[df_filtered["problemIndex"] == problem_index]
+    # Iterate over all pairs of parameter combinations
+    for param1, param2 in combinations(
+        parameter_combinations.itertuples(index=False), 2
+    ):
+        param1_crossover, param1_mutation = param1
+        param2_crossover, param2_mutation = param2
 
-        for param1, param2 in tqdm(
-            parameter_pairs, desc=f"Wilcoxon for Problem {problem_index}"
-        ):
-            param1_df = problem_df[
-                (problem_df["crossoverProbability"] == param1.crossoverProbability)
-                & (problem_df["mutationProbability"] == param1.mutationProbability)
-            ]["bestIndividual.fitness"]
+        # Filter data for the two parameter combinations
+        group1 = df_filtered[
+            (df_filtered["crossoverProbability"] == param1_crossover)
+            & (df_filtered["mutationProbability"] == param1_mutation)
+        ]
 
-            param2_df = problem_df[
-                (problem_df["crossoverProbability"] == param2.crossoverProbability)
-                & (problem_df["mutationProbability"] == param2.mutationProbability)
-            ]["bestIndividual.fitness"]
+        group2 = df_filtered[
+            (df_filtered["crossoverProbability"] == param2_crossover)
+            & (df_filtered["mutationProbability"] == param2_mutation)
+        ]
 
-            if len(param1_df) == len(param2_df) and len(param1_df) > 0:
-                # Check for all-zero differences and handle gracefully
-                if (param1_df.values == param2_df.values).all():
-                    pvalue = 1.0  # No difference, assign p-value of 1.0
-                else:
-                    _, pvalue = wilcoxon(param1_df, param2_df)
+        # Ensure both groups have results for all problem instances
+        if set(group1["problemIndex"]) != set(PROBLEM_INDEXES) or set(
+            group2["problemIndex"]
+        ) != set(PROBLEM_INDEXES):
+            continue
 
-                pvalues_data.append(
-                    {
-                        "problemIndex": problem_index,
-                        "crossoverProbability_1": param1.crossoverProbability,
-                        "mutationProbability_1": param1.mutationProbability,
-                        "crossoverProbability_2": param2.crossoverProbability,
-                        "mutationProbability_2": param2.mutationProbability,
-                        "pvalue": pvalue,
-                    }
-                )
+        # Pair samples by problemIndex
+        fitness1 = group1.sort_values("problemIndex")["bestIndividual.fitness"].values
+        fitness2 = group2.sort_values("problemIndex")["bestIndividual.fitness"].values
 
-    # Save p-values to a CSV file
-    pvalues_df = pd.DataFrame(pvalues_data)
-    pvalues_df.to_csv(PVALUES_CSV, index=False)
+        # Perform Wilcoxon signed-rank test
+        try:
+            stat, pvalue = wilcoxon(fitness1, fitness2)
+        except ValueError:
+            # Wilcoxon test requires paired data; skip if there's an issue
+            continue
+
+        # Store results
+        pvalues_data.append(
+            {
+                "param1_crossover": param1_crossover,
+                "param1_mutation": param1_mutation,
+                "param2_crossover": param2_crossover,
+                "param2_mutation": param2_mutation,
+                "pvalue": pvalue,
+            }
+        )
+
+    # Save p-values to CSV
+    if pvalues_data:
+        pvalues_df = pd.DataFrame(pvalues_data)
+        pvalues_df.to_csv(PVALUES_CSV, index=False)
