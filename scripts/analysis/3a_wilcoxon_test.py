@@ -26,7 +26,7 @@ for evaluations in FUNCTION_EVALUATIONS:
         df_sub.groupby(["crossoverProbability", "mutationProbability", "problemIndex"])[
             "normalized_fitness"
         ]
-        .median()
+        .mean()
         .reset_index()
     )
 
@@ -72,13 +72,13 @@ for evaluations in FUNCTION_EVALUATIONS:
             )
 
         # Determine winner and loser for this comparison
-        median_c1 = np.mean(data1)
-        median_c2 = np.mean(data2)
+        mean_c1 = np.mean(data1)
+        mean_c2 = np.mean(data2)
 
         # If p < ALPHA, it is statistically significant
         # and we can determine a winner
         if p < ALPHA:
-            if median_c1 > median_c2:
+            if mean_c1 > mean_c2:
                 winner = c1
                 loser = c2
             else:
@@ -102,12 +102,6 @@ for evaluations in FUNCTION_EVALUATIONS:
                 "loser_mp": loser[1] if loser else None,
             }
         )
-
-    # Apply Bonferroni correction
-    M = len(comparison_results)
-    for r in comparison_results:
-        corrected_p = min(r["p-value"] * M, 1.0)
-        r["p-value_corrected"] = corrected_p
 
     # Determine best config based on wins
     wins_count = {}
