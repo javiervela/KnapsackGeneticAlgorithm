@@ -106,6 +106,8 @@ poetry install
     - `1_fitness_stats_calculate.py`: Calculate fitness value statistics.
     - `2_exec_time_stats_plot.py`: Plot execution time statistics.
     - `2_fitness_stats_plot.py`: Plot fitness value statistics.
+    - `3a_wilcoxon_test.py`: Perform Wilcoxon signed rank test between different parameter configurations.
+    - `3b_wilcoxon_analysis.py`: Plot the results of the Wilcoxon signed rank test and best parameter configurations.
 - `data/`:
   - `mknap1.txt`: Problem instances for the multidimensional knapsack problem.
   - `README.md`: Description of the problem instances.
