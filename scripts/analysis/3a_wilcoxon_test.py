@@ -1,72 +1,144 @@
 import os
 import pandas as pd
+import itertools
+import numpy as np
 from scipy.stats import wilcoxon
-from itertools import combinations
 
-# Define constants
 FUNCTION_EVALUATIONS = [-1, 1000, 10000]
 PROBLEM_INDEXES = list(range(7))
 RESULTS_FILE = "./data/results.parquet"
+ALPHA = 0.05
 
-# Load data
 df = pd.read_parquet(RESULTS_FILE)
 
-# Loop through evaluation levels
+# Normalize fitness
+df["normalized_fitness"] = df["bestIndividual.fitness"] / df["problem.optimalValue"]
+
 for evaluations in FUNCTION_EVALUATIONS:
     ANALYSIS_DIR = os.path.join("analysis", f"{evaluations}_evaluations")
     os.makedirs(ANALYSIS_DIR, exist_ok=True)
-    PVALUES_CSV = os.path.join(ANALYSIS_DIR, "wilcoxon_pvalues.csv")
 
-    # Filter data for the current evaluations level
-    df_filtered = df[df["functionEvaluations"] == evaluations]
+    # Filter data for this scenario
+    df_sub = df[df["functionEvaluations"] == evaluations].copy()
 
-    # Prepare a list to store p-values
-    pvalues = []
+    # Aggregate by (crossoverProbability, mutationProbability, problemIndex)
+    agg = (
+        df_sub.groupby(["crossoverProbability", "mutationProbability", "problemIndex"])[
+            "normalized_fitness"
+        ]
+        .median()
+        .reset_index()
+    )
 
-    # Loop through each problem index
-    for problem_index in PROBLEM_INDEXES:
-        # Filter data for the current problem index
-        df_problem = df_filtered[df_filtered["problemIndex"] == problem_index]
+    result_dict = {}
+    configs = (
+        agg[["crossoverProbability", "mutationProbability"]]
+        .drop_duplicates()
+        .values.tolist()
+    )
 
-        # Get all unique parameter combinations
-        parameter_combinations = df_problem.groupby(
-            ["crossoverProbability", "mutationProbability"]
-        ).groups.keys()
+    for cp, mp in configs:
+        subset = agg[
+            (agg["crossoverProbability"] == cp) & (agg["mutationProbability"] == mp)
+        ]
+        subset = subset.sort_values(by="problemIndex")
+        perf_vector = subset["normalized_fitness"].values
+        if len(perf_vector) == len(PROBLEM_INDEXES):
+            result_dict[(cp, mp)] = perf_vector
 
-        # Perform pairwise Wilcoxon tests for each combination
-        for comb1, comb2 in combinations(parameter_combinations, 2):
-            # Extract fitness values for the two parameter combinations
-            fitness1 = df_problem[
-                (df_problem["crossoverProbability"] == comb1[0])
-                & (df_problem["mutationProbability"] == comb1[1])
-            ]["bestIndividual.fitness"]
+    # Pairwise comparisons
+    all_pairs = list(itertools.combinations(result_dict.keys(), 2))
+    comparison_results = []
 
-            fitness2 = df_problem[
-                (df_problem["crossoverProbability"] == comb2[0])
-                & (df_problem["mutationProbability"] == comb2[1])
-            ]["bestIndividual.fitness"]
+    for c1, c2 in all_pairs:
+        data1 = result_dict[c1]
+        data2 = result_dict[c2]
 
-            # Perform Wilcoxon test
-            try:
-                stat, pvalue = wilcoxon(fitness1, fitness2, alternative="two-sided")
-            except ValueError:
-                # Handle cases where the fitness values are identical or have insufficient data
-                pvalue = float("nan")
+        # Check if all equal
+        all_equal = all(abs(a - b) < 1e-14 for a, b in zip(data1, data2))
 
-            # Store results
-            pvalues.append(
-                {
-                    "problemIndex": problem_index,
-                    "comb1_crossover": comb1[0],
-                    "comb1_mutation": comb1[1],
-                    "comb2_crossover": comb2[0],
-                    "comb2_mutation": comb2[1],
-                    "pvalue": pvalue,
-                }
+        if all_equal:
+            stat = None
+            p = 1.0
+        else:
+            # Use Wilcoxon test
+            # If exact method fails, it will switch automatically
+            stat, p = wilcoxon(
+                data1,
+                data2,
+                zero_method="wilcox",
+                alternative="two-sided",
+                method="auto",
             )
 
-    # Convert results to a DataFrame and save as CSV
-    pvalues_df = pd.DataFrame(pvalues)
-    pvalues_df.to_csv(PVALUES_CSV, index=False)
+        # Determine winner and loser for this comparison
+        median_c1 = np.mean(data1)
+        median_c2 = np.mean(data2)
 
-    print(f"P-values for {evaluations} evaluations saved to {PVALUES_CSV}")
+        # If p < ALPHA, it is statistically significant
+        # and we can determine a winner
+        if p < ALPHA:
+            if median_c1 > median_c2:
+                winner = c1
+                loser = c2
+            else:
+                winner = c2
+                loser = c1
+        else:
+            winner = None
+            loser = None
+
+        comparison_results.append(
+            {
+                "config1_cp": c1[0],
+                "config1_mp": c1[1],
+                "config2_cp": c2[0],
+                "config2_mp": c2[1],
+                "p-value": p,
+                "stat": stat,
+                "winner_cp": winner[0] if winner else None,
+                "winner_mp": winner[1] if winner else None,
+                "loser_cp": loser[0] if loser else None,
+                "loser_mp": loser[1] if loser else None,
+            }
+        )
+
+    # Apply Bonferroni correction
+    M = len(comparison_results)
+    for r in comparison_results:
+        corrected_p = min(r["p-value"] * M, 1.0)
+        r["p-value_corrected"] = corrected_p
+
+    # Determine best config based on wins
+    wins_count = {}
+    for c in result_dict.keys():
+        wins_count[c] = 0
+    for r in comparison_results:
+        if r["winner_cp"] is not None:
+            wins_count[(r["winner_cp"], r["winner_mp"])] += 1
+
+    max_wins = max(wins_count.values()) if len(wins_count) > 0 else 0
+    best_configs = [c for c, w in wins_count.items() if w == max_wins]
+
+    # If tie, break it by global mean performance
+    if len(best_configs) > 1:
+        perf_map = {c: np.mean(result_dict[c]) for c in best_configs}
+        best_perf = max(perf_map.values())
+        best_configs = [c for c, val in perf_map.items() if val == best_perf]
+
+    # Save comparison results to CSV
+    comp_df = pd.DataFrame(comparison_results)
+    comp_df.to_csv(os.path.join(ANALYSIS_DIR, f"stat_test_results.csv"), index=False)
+
+    # Save wins_count to CSV
+    wc_data = []
+    for c, w in wins_count.items():
+        wc_data.append({"cp": c[0], "mp": c[1], "wins": w})
+    wc_df = pd.DataFrame(wc_data)
+    wc_df.to_csv(
+        os.path.join(ANALYSIS_DIR, f"stat_test_wins_count.csv"),
+        index=False,
+    )
+
+    # Print best combination(s) to stdout
+    print(f"For evaluations={evaluations}, best combination(s): {best_configs}")
