@@ -4,6 +4,9 @@ A basic genetic algorithm implementation for solving the knapsack problem. This 
 
 This project is a fork of a simple evolutionary algorithm originally created by Francisco Chicano (University of Malaga, Spain) for educational purposes. This fork adapts the project specifically for studying genetic algorithms applied to the knapsack problem.
 
+- Report: [report.pdf](doc/report.pdf)
+- Video Presentation: [Youtube | Statistical Analysis of Genetic Algorithm Performance on the Multidimensional Knapsack Problem](https://www.youtube.com/watch?v=7Z3a22ygyIs)
+
 ## Installation
 
 ### Prerequisites
